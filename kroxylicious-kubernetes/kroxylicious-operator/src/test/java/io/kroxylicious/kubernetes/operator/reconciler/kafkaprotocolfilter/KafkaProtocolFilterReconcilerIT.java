@@ -186,9 +186,13 @@ class KafkaProtocolFilterReconcilerIT {
 
         // then
         assertAllConditionsTrue(filterOne);
-        String newChecksum = testActor.get(KafkaProtocolFilter.class, ResourcesUtil.name(filterOne)).getMetadata().getAnnotations()
-                .getOrDefault(Annotations.REFERENT_CHECKSUM_ANNOTATION_KEY, NO_CHECKSUM_SPECIFIED);
-        assertThat(newChecksum).isNotEqualTo(checksum);
+        // The referent checksum annotation may be recomputed in a later reconciliation than the one that
+        // sets the conditions, so poll for it to change rather than asserting on a single snapshot (see #4018).
+        AWAIT.alias("referent checksum annotation updated").untilAsserted(() -> {
+            String newChecksum = testActor.get(KafkaProtocolFilter.class, ResourcesUtil.name(filterOne)).getMetadata().getAnnotations()
+                    .getOrDefault(Annotations.REFERENT_CHECKSUM_ANNOTATION_KEY, NO_CHECKSUM_SPECIFIED);
+            assertThat(newChecksum).isNotEqualTo(checksum);
+        });
     }
 
     @Test
@@ -205,9 +209,13 @@ class KafkaProtocolFilterReconcilerIT {
 
         // then
         assertAllConditionsTrue(filterOne);
-        String newChecksum = testActor.get(KafkaProtocolFilter.class, ResourcesUtil.name(filterOne)).getMetadata().getAnnotations()
-                .getOrDefault(Annotations.REFERENT_CHECKSUM_ANNOTATION_KEY, NO_CHECKSUM_SPECIFIED);
-        assertThat(newChecksum).isNotEqualTo(checksum);
+        // The referent checksum annotation may be recomputed in a later reconciliation than the one that
+        // sets the conditions, so poll for it to change rather than asserting on a single snapshot (see #4018).
+        AWAIT.alias("referent checksum annotation updated").untilAsserted(() -> {
+            String newChecksum = testActor.get(KafkaProtocolFilter.class, ResourcesUtil.name(filterOne)).getMetadata().getAnnotations()
+                    .getOrDefault(Annotations.REFERENT_CHECKSUM_ANNOTATION_KEY, NO_CHECKSUM_SPECIFIED);
+            assertThat(newChecksum).isNotEqualTo(checksum);
+        });
     }
 
     @Test
